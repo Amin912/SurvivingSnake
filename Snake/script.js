@@ -2,7 +2,6 @@
 
 var interface=document.getElementById("interface");
 var can=document.getElementById("main");
-can.offScree
 ctx=can.getContext('2d');
 
 function randomGrid(size){
@@ -173,7 +172,6 @@ Snake.prototype.getEvent=function(){
 
 Snake.prototype.automove=function(){
 	let x=Math.floor(Math.random()*100)%4;
-	console.log(x);
 	if (x==0 && !this.sy) {
             this.sy=this.h;
             this.sx=0;
@@ -220,6 +218,7 @@ Snake.prototype.collide=function(obst)
 function game(gridsize=20, borders=false){
 var food=new Rect(randomGrid(gridsize),randomGrid(gridsize),gridsize,gridsize);
 var snake=new Snake(gridsize*2,gridsize*2,gridsize,gridsize,0,0,borders);
+snake.getEvent();
 
 function loop()
 {
@@ -228,14 +227,12 @@ function loop()
 	snake.draw(0,100,12);
 	food.draw(0,0,0);
 	snake.update();
-	snake.getEvent();
 	if(snake.collide(food)){snake.eats(food, gridsize);dat.array[0]=([snake.dist(food),Math.sqrt(Math.pow((snake.x-can.width),2)+Math.pow((snake.y-can.height),2))]);
-    console.log(dat.array);}
+    }
 	snake.tail.forEach(element=> {if (snake.collide(element)) snake.stop();});
 	// if(Math.abs(snake.x-food.x)==Math.abs(snake.y-food.y)){console.log(Math.sqrt(Math.pow((snake.x-food.x),2)+Math.pow((snake.y-food.y),2)))}
 	// dat.array[0]=1;
 	// dat.array.push([Math.sqrt(Math.pow((snake.x-food.x),2)+Math.pow((snake.y-food.y),2)),Math.sqrt(Math.pow((snake.x-can.width),2)+Math.pow((snake.y-can.height),2))])
-    console.log(Math.sqrt(Math.pow((snake.x-food.x),2)+Math.pow((snake.y-food.y),2)));
     window.setTimeout(loop,80);
    
 }
