@@ -4,16 +4,73 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Surviving Snake</title>
+  <meta name="description" content="A snake that learns to play by evolution: a small neural network trained with a genetic algorithm, in the browser.">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <main>
     <header>
       <h1>Surviving Snake</h1>
-      <p class="score">Score <span id="score">0</span></p>
+      <p class="lead">A snake that learns to play by evolution: a small neural network, trained by a genetic algorithm, right in your browser.</p>
     </header>
-    <canvas id="board"></canvas>
-    <p class="hint">Arrow keys or WASD to steer.</p>
+
+    <div class="layout">
+      <section class="board-panel">
+        <div class="tabs" role="tablist">
+          <button class="tab active" data-mode="watch">Watch the AI</button>
+          <button class="tab" data-mode="play">Play yourself</button>
+          <span class="score">Score <strong id="score">0</strong></span>
+        </div>
+        <canvas id="board" aria-label="Snake board"></canvas>
+        <div class="board-footer">
+          <span class="watch-only" id="brain-label"></span>
+          <label class="watch-only speed">Speed <input id="speed" type="range" min="5" max="60" value="18"></label>
+          <span class="play-only">Arrow keys or WASD to steer.</span>
+        </div>
+      </section>
+
+      <aside>
+        <div class="card">
+          <h2>Training</h2>
+          <div class="stats">
+            <div><span id="generation">–</span>generation</div>
+            <div><span id="best">–</span>best score</div>
+            <div><span id="average">–</span>average</div>
+          </div>
+          <div class="buttons">
+            <button id="train" class="primary">Start training</button>
+            <button id="reset">Start over</button>
+          </div>
+          <div class="segmented" aria-label="Snake to watch">
+            <button data-source="trained" class="active">Pre-trained</button>
+            <button data-source="live">Latest generation</button>
+          </div>
+          <canvas id="chart" aria-label="Score per generation"></canvas>
+          <p class="legend"><span class="dot best"></span>best <span class="dot average"></span>average</p>
+        </div>
+
+        <div class="card watch-only">
+          <h2>What it is thinking</h2>
+          <canvas id="network" aria-label="Neural network activity"></canvas>
+          <p class="note">32 inputs (what it sees), two hidden layers, and one output per direction. The brightest output is the move it makes.</p>
+        </div>
+      </aside>
+    </div>
+
+    <section class="explain">
+      <div>
+        <h3>What it sees</h3>
+        <p>From its head the snake looks in eight directions. For each one it knows how close the wall is, how close its own body is, and whether food lies that way.</p>
+      </div>
+      <div>
+        <h3>How it decides</h3>
+        <p>Those numbers go into a small neural network with two hidden layers. Its four outputs are up, right, down and left, and the snake follows the strongest.</p>
+      </div>
+      <div>
+        <h3>How it learns</h3>
+        <p>400 snakes with random brains play a game each. The best are more likely to become parents; each child mixes its parents' weights and some change at random. Repeat.</p>
+      </div>
+    </section>
   </main>
   <script type="module" src="src/main.js"></script>
 </body>

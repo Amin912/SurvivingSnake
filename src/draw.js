@@ -12,16 +12,37 @@ export const Colors = {
 };
 
 // Makes the canvas sharp on high-DPI screens and returns a context that
-// draws in CSS pixels.
+// draws in a fixed width x height coordinate space. CSS may still shrink the
+// canvas on a narrow screen; the drawing scales with it.
 export function setUpCanvas(canvas, width, height) {
-  const ratio = window.devicePixelRatio || 1;
+  const ratio = Math.max(window.devicePixelRatio || 1, 1);
   canvas.width = Math.round(width * ratio);
   canvas.height = Math.round(height * ratio);
-  canvas.style.width = `${width}px`;
-  canvas.style.height = `${height}px`;
+  canvas.style.maxWidth = `${width}px`;
+  canvas.style.aspectRatio = `${width} / ${height}`;
   const ctx = canvas.getContext("2d");
   ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
   return ctx;
+}
+
+// The snake's eight lines of sight, as returned by look(). Faint to the wall,
+// coral where it sees food, white where it sees its own body.
+export function drawRays(ctx, game, rays, cell) {
+  const cx = (game.head.x + 0.5) * cell;
+  const cy = (game.head.y + 0.5) * cell;
+  const segment = (dx, dy, distance, color, width) => {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + dx * (distance - 0.5) * cell, cy + dy * (distance - 0.5) * cell);
+    ctx.stroke();
+  };
+  for (const ray of rays) {
+    segment(ray.dx, ray.dy, ray.wall, "rgba(255, 255, 255, 0.07)", 1);
+    if (ray.body) segment(ray.dx, ray.dy, ray.body, "rgba(255, 255, 255, 0.28)", 1.5);
+    if (ray.food) segment(ray.dx, ray.dy, ray.food, "rgba(255, 107, 107, 0.7)", 2);
+  }
 }
 
 export function drawBoard(ctx, game, cell) {
